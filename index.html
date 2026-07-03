@@ -6,6 +6,7 @@
 <title>Wilhen AI Studio</title>
 
 <style>
+
 *{
 margin:0;
 padding:0;
@@ -19,47 +20,153 @@ color:#fff;
 }
 
 header{
-padding:30px;
-background:linear-gradient(90deg,#2563eb,#7c3aed);
-text-align:center;
+padding:20px 8%;
+display:flex;
+justify-content:space-between;
+align-items:center;
+background:#111827;
+position:sticky;
+top:0;
 }
 
-.container{
-max-width:1100px;
-margin:auto;
-padding:30px;
+.logo{
+font-size:28px;
+font-weight:bold;
+color:#60a5fa;
+}
+
+nav a{
+color:white;
+text-decoration:none;
+margin-left:25px;
+}
+
+.hero{
+padding:80px 8%;
+text-align:center;
+background:linear-gradient(135deg,#2563eb,#7c3aed);
+}
+
+.hero h1{
+font-size:48px;
+margin-bottom:20px;
+}
+
+.hero p{
+font-size:20px;
+opacity:.9;
+}
+
+.hero button{
+margin-top:30px;
+padding:15px 40px;
+border:none;
+border-radius:12px;
+background:white;
+color:#2563eb;
+font-size:18px;
+cursor:pointer;
+font-weight:bold;
+}
+
+.search{
+padding:40px 8%;
+}
+
+.search input{
+width:100%;
+padding:18px;
+border:none;
+border-radius:12px;
+font-size:18px;
+}
+
+.apps{
+padding:20px 8%;
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+gap:25px;
 }
 
 .card{
 background:#1e293b;
 padding:25px;
-border-radius:15px;
-margin-bottom:20px;
+border-radius:20px;
+transition:.3s;
+}
+
+.card:hover{
+transform:translateY(-8px);
 }
 
 .card h2{
-margin-bottom:10px;
+margin-bottom:15px;
+}
+
+.badge{
+display:inline-block;
+padding:5px 12px;
+background:#22c55e;
+border-radius:20px;
+font-size:12px;
+margin-bottom:15px;
 }
 
 .btn{
-display:inline-block;
-margin-top:15px;
+display:block;
+text-align:center;
+margin-top:20px;
+padding:14px;
 background:#2563eb;
-padding:12px 25px;
 border-radius:10px;
 color:white;
 text-decoration:none;
+font-weight:bold;
 }
 
 .btn:hover{
 background:#3b82f6;
 }
 
-footer{
+.stats{
+padding:60px 8%;
+display:grid;
+grid-template-columns:repeat(3,1fr);
 text-align:center;
-padding:25px;
+}
+
+.stats h2{
+font-size:45px;
+color:#60a5fa;
+}
+
+footer{
+padding:40px;
+text-align:center;
 opacity:.6;
 }
+
+@media(max-width:768px){
+
+.hero h1{
+font-size:34px;
+}
+
+.stats{
+grid-template-columns:1fr;
+gap:30px;
+}
+
+header{
+flex-direction:column;
+}
+
+nav{
+margin-top:15px;
+}
+
+}
+
 </style>
 
 </head>
@@ -67,34 +174,122 @@ opacity:.6;
 <body>
 
 <header>
-<h1>🚀 Wilhen AI Studio</h1>
-<p>Member Area Premium</p>
+
+<div class="logo">
+🚀 Wilhen AI Studio
+</div>
+
+<nav>
+
+<a href="#">Dashboard</a>
+<a href="#">AI Apps</a>
+<a href="#">Bonus</a>
+<a href="#">Support</a>
+
+</nav>
+
 </header>
 
-<div class="container">
+<section class="hero">
+
+<h1>Smart AI Tools</h1>
+
+<p>Semua aplikasi AI premium dalam satu dashboard.</p>
+
+<button>Explore Apps</button>
+
+</section>
+
+<section class="search">
+
+<input type="text" placeholder="🔍 Cari aplikasi AI...">
+
+</section>
+
+<section class="apps">
 
 <div class="card">
-<h2>🤖 AI Thumbnail Generator</h2>
-<p>Membuat thumbnail AI hanya dalam hitungan detik.</p>
+
+<div class="badge">NEW</div>
+
+<h2>🤖 AI Thumbnail</h2>
+
+<p>Membuat thumbnail profesional menggunakan AI.</p>
+
 <a href="#" class="btn">OPEN APP</a>
+
 </div>
 
 <div class="card">
-<h2>🎬 AI Video Generator</h2>
-<p>Generator video AI profesional.</p>
+
+<div class="badge">POPULAR</div>
+
+<h2>🎬 AI Video</h2>
+
+<p>Generator video AI otomatis.</p>
+
 <a href="#" class="btn">OPEN APP</a>
+
 </div>
 
 <div class="card">
-<h2>✍ AI Prompt Generator</h2>
+
+<div class="badge">PREMIUM</div>
+
+<h2>✍ AI Prompt</h2>
+
 <p>Prompt premium siap pakai.</p>
+
 <a href="#" class="btn">OPEN APP</a>
-</div>
 
 </div>
+
+<div class="card">
+
+<div class="badge">NEW</div>
+
+<h2>🖼 AI Image</h2>
+
+<p>Generator gambar AI kualitas tinggi.</p>
+
+<a href="#" class="btn">OPEN APP</a>
+
+</div>
+
+</section>
+
+<section class="stats">
+
+<div>
+
+<h2>20+</h2>
+
+<p>AI Apps</p>
+
+</div>
+
+<div>
+
+<h2>15</h2>
+
+<p>Bonus</p>
+
+</div>
+
+<div>
+
+<h2>24/7</h2>
+
+<p>Support</p>
+
+</div>
+
+</section>
 
 <footer>
+
 © 2026 Wilhen AI Studio
+
 </footer>
 
 </body>
