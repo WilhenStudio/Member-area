@@ -1,279 +1,959 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Wilhen AI Studio</title>
-
-<style>
-
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:Arial,sans-serif;
-}
-
-body{
-background:#0f172a;
-color:#fff;
-}
-
-header{
-padding:20px 8%;
-display:flex;
-justify-content:space-between;
-align-items:center;
-background:#111827;
-position:sticky;
-top:0;
-}
-
-.logo{
-font-size:28px;
-font-weight:bold;
-color:#60a5fa;
-}
-
-nav a{
-color:white;
-text-decoration:none;
-margin-left:25px;
-}
-
-.hero{
-padding:30px 8%;
-text-align:center;
-background:#111827;
-border-bottom:1px solid #2d3748;
-}
-
-.hero h1{
-font-size:30px;
-margin-bottom:10px;
-}
-
-.hero p{
-font-size:20px;
-opacity:.9;
-}
-
-.hero p{
-font-size:16px;
-opacity:.8;
-}
-border-radius:12px;
-background:white;
-color:#2563eb;
-font-size:18px;
-cursor:pointer;
-font-weight:bold;
-}
-
-.apps{
-padding:20px 8%;
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
-gap:25px;
-}
-
-.card{
-background:#1e293b;
-padding:25px;
-border-radius:20px;
-transition:.3s;
-}
-
-.card:hover{
-transform:translateY(-8px);
-}
-
-.card h2{
-margin-bottom:15px;
-}
-
-.badge{
-display:inline-block;
-padding:5px 12px;
-background:#22c55e;
-border-radius:20px;
-font-size:12px;
-margin-bottom:15px;
-}
-
-.btn{
-display:block;
-text-align:center;
-margin-top:20px;
-padding:14px;
-background:#2563eb;
-border-radius:10px;
-color:white;
-text-decoration:none;
-font-weight:bold;
-}
-
-.btn:hover{
-background:#3b82f6;
-}
-
-.stats{
-padding:60px 8%;
-display:grid;
-grid-template-columns:repeat(3,1fr);
-text-align:center;
-}
-
-.stats h2{
-font-size:45px;
-color:#60a5fa;
-}
-
-footer{
-padding:40px;
-text-align:center;
-opacity:.6;
-}
-
-@media(max-width:768px){
-
-.hero h1{
-font-size:34px;
-}
-
-.stats{
-grid-template-columns:1fr;
-gap:30px;
-}
-
-header{
-flex-direction:column;
-}
-
-nav{
-margin-top:15px;
-}
-
-}
-
-</style>
-
-</head>
-
-<body>
-
-<header>
-
-<div class="logo">
-🚀 Wilhen AI Studio
-</div>
-
-<nav>
-
-<a href="#">Dashboard</a>
-<a href="#">AI Apps</a>
-<a href="#">Bonus</a>
-<a href="#">Support</a>
-
-</nav>
-
-</header>
-
-<section class="hero">
-
-<h1>Smart AI Tools</h1>
-
-<p>Semua aplikasi AI premium dalam satu dashboard.</p>
-
-<button>Explore Apps</button>
-
-</section>
-
-<section class="apps">
-
-<div class="card">
-
-<div class="badge">NEW</div>
-
-<h2>🤖 AI Thumbnail</h2>
-
-<p>Membuat thumbnail profesional menggunakan AI.</p>
-
-<a href="#" class="btn">OPEN APP</a>
-
-</div>
-
-<div class="card">
-
-<div class="badge">POPULAR</div>
-
-<h2>🎬 AI Video</h2>
-
-<p>Generator video AI otomatis.</p>
-
-<a href="#" class="btn">OPEN APP</a>
-
-</div>
-
-<div class="card">
-
-<div class="badge">PREMIUM</div>
-
-<h2>✍ AI Prompt</h2>
-
-<p>Prompt premium siap pakai.</p>
-
-<a href="#" class="btn">OPEN APP</a>
-
-</div>
-
-<div class="card">
-
-<div class="badge">NEW</div>
-
-<h2>🖼 AI Image</h2>
-
-<p>Generator gambar AI kualitas tinggi.</p>
-
-<a href="#" class="btn">OPEN APP</a>
-
-</div>
-
-</section>
-
-<section class="stats">
-
-<div>
-
-<h2>20+</h2>
-
-<p>AI Apps</p>
-
-</div>
-
-<div>
-
-<h2>15</h2>
-
-<p>Bonus</p>
-
-</div>
-
-<div>
-
-<h2>24/7</h2>
-
-<p>Support</p>
-
-</div>
-
-</section>
-
-<footer>
-
-© 2026 Wilhen AI Studio
-
-</footer>
-
-</body>
-</html>
+import React, { useState } from 'react';
+import { Camera, Film, Copy, RefreshCw, Image as ImageIcon, Settings, Download, AlertCircle, Play } from 'lucide-react';
+
+const App = () => {
+    // --- State ---
+    const [apiKey, setApiKey] = useState(() => localStorage.getItem("cinefact_api_key") || "");
+    const [topic, setTopic] = useState("");
+    const [theme, setTheme] = useState("Cinematic Realistic");
+    const [ratio, setRatio] = useState("9:16");
+    const [language, setLanguage] = useState("Bahasa Indonesia");
+    const [customLanguage, setCustomLanguage] = useState("");
+    const [sceneCount, setSceneCount] = useState(5); 
+    const [narratorVoice, setNarratorVoice] = useState("Otomatis");
+    
+    const [scenes, setScenes] = useState([]);
+    const [isGeneratingText, setIsGeneratingText] = useState(false);
+    const [loadingImages, setLoadingImages] = useState({}); // Track loading state per scene index
+    
+    // --- State Baru untuk Asisten API Key ---
+    const [isGuideOpen, setIsGuideOpen] = useState(false);
+    const [guideStep, setGuideStep] = useState(1);
+    const [tempKey, setTempKey] = useState("");
+    
+    const [errorMsg, setErrorMsg] = useState("");
+    const [copySuccess, setCopySuccess] = useState(""); // Feedback state for copying
+    const [isDemo, setIsDemo] = useState(false); // Track if current result is from Demo Mode
+
+    // --- Mock Data for Demo Mode ---
+    const DEMO_STORIES = [
+        {
+            topic_keyword: "laut",
+            title: "3 Fakta Mengerikan Palung Mariana",
+            scenes: [
+                {
+                    scene_number: 1,
+                    narration_style_direction: "Suara pria dewasa, berat, misterius, tempo lambat, gaya dokumenter horor.",
+                    narration: "Palung Mariana. Titik terdalam di bumi kita yang menyimpan kegelapan abadi. Lebih dalam dari tinggi Gunung Everest jika dibalik.",
+                    visual_description: "A dark deep ocean trench, faint beams of sunlight fading into a pitch-black abyss, cinematic.",
+                    video_prompt: "Cinematic shot of deep ocean abyss, dark underwater trench, faint light rays filtering from above fading into complete darkness, highly detailed water particles, 8k --ar 9:16",
+                    generatedImage: "https://images.unsplash.com/photo-1583212292454-1fe6229603b7?auto=format&fit=crop&w=800&q=80"
+                },
+                {
+                    scene_number: 2,
+                    narration_style_direction: "Suara pria dewasa, berat, misterius, tempo lambat, gaya dokumenter horor.",
+                    narration: "Di kedalaman sebelas ribu meter, tekanan airnya setara dengan ditindih lima puluh pesawat jet tempur sekaligus. Hancur seketika.",
+                    visual_description: "Crushing deep ocean pressure visualization, robotic submarine navigating dark waters with searchlights.",
+                    video_prompt: "High-tech research submarine navigating through the pitch-black deep sea, bright searchlights illuminating mysterious rock formations, bubbles, realistic CGI, cinematic lighting --ar 9:16",
+                    generatedImage: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80"
+                },
+                {
+                    scene_number: 3,
+                    narration_style_direction: "Suara pria dewasa, berat, misterius, tempo lambat, gaya dokumenter horor.",
+                    narration: "Namun anehnya, di lingkungan se-ekstrem ini, ilmuwan masih menemukan kehidupan asing. Monster laut nyata yang berevolusi tanpa cahaya matahari.",
+                    visual_description: "Bioluminescent deep sea creature glowing in the pitch black ocean.",
+                    video_prompt: "Bioluminescent alien-like deep sea creature, glowing with neon blue and purple lights in the dark ocean, transparent skin, cinematic, highly detailed, Unreal Engine 5 render --ar 9:16",
+                    generatedImage: "https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=800&q=80"
+                }
+            ]
+        },
+        {
+            topic_keyword: "luar angkasa",
+            title: "Misteri Planet Mars yang Menyeramkan",
+            scenes: [
+                {
+                    scene_number: 1,
+                    narration_style_direction: "Suara pria dewasa, tenang, penuh wibawa, gaya dokumenter sains.",
+                    narration: "Mars, tetangga terdekat kita yang tampak mati dan gersang. Namun, planet merah ini menyimpan rahasia masa lalu yang mencengangkan.",
+                    visual_description: "Wide shot of Mars red dusty landscape with mountains in the background, cinematic.",
+                    video_prompt: "Cinematic wide shot of Mars surface, red dusty landscape, massive craters and canyon walls, thin orange atmosphere, highly detailed realistic space photography --ar 9:16",
+                    generatedImage: "https://images.unsplash.com/photo-1614728894747-a83421e2b9c9?auto=format&fit=crop&w=800&q=80"
+                },
+                {
+                    scene_number: 2,
+                    narration_style_direction: "Suara pria dewasa, tenang, penuh wibawa, gaya dokumenter sains.",
+                    narration: "Miliaran tahun lalu, Mars diprediksi memiliki samudra air cair yang sangat luas seperti bumi. Ke mana perginya semua air itu?",
+                    visual_description: "An ancient Mars with blue oceans and green land, transition to dry red planet.",
+                    video_prompt: "Terraformed Mars with blue oceans and rivers transition effect into dry red sandy planet, satellite view, cosmic background, high quality visualization --ar 9:16",
+                    generatedImage: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=800&q=80"
+                },
+                {
+                    scene_number: 3,
+                    narration_style_direction: "Suara pria dewasa, tenang, penuh wibawa, gaya dokumenter sains.",
+                    narration: "Kini, Mars terus dihantam badai debu raksasa yang menutupi seluruh permukaan planet selama berbulan-bulan. Apakah manusia sanggup bertahan di sana?",
+                    visual_description: "Astronaut standing on Mars surface looking at a massive incoming red dust storm.",
+                    video_prompt: "Lonely astronaut in a high-tech spacesuit standing on red soil, looking at a colossal dust storm approaching, cinematic sci-fi lighting, dramatic atmosphere --ar 9:16",
+                    generatedImage: "https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?auto=format&fit=crop&w=800&q=80"
+                }
+            ]
+        },
+        {
+            topic_keyword: "umum",
+            title: "Keajaiban di Balik Otak Manusia",
+            scenes: [
+                {
+                    scene_number: 1,
+                    narration_style_direction: "Suara wanita muda, santai, ramah, gaya narasi konten edukasi TikTok.",
+                    narration: "Tahu nggak, otak kita itu sebenarnya superkomputer alami paling canggih yang pernah ada. Energi listrik di dalamnya bahkan bisa menyalakan lampu bohlam!",
+                    visual_description: "Glowing human brain network of synapses, stylized technology illustration.",
+                    video_prompt: "Visual representation of human brain glowing with vibrant electrical networks, synapses firing glowing blue lights, stylized tech background, cinematic macro lens shot --ar 9:16",
+                    generatedImage: "https://images.unsplash.com/photo-1507668077129-56e32842fceb?auto=format&fit=crop&w=800&q=80"
+                },
+                {
+                    scene_number: 2,
+                    narration_style_direction: "Suara wanita muda, santai, ramah, gaya narasi konten edukasi TikTok.",
+                    narration: "Setiap detiknya, terjadi lebih dari seratus ribu reaksi kimia di dalam otak untuk memproses pikiran, emosi, dan memori masa kecilmu.",
+                    visual_description: "Abstract chemical reaction, flowing colorful liquids and sparks, cinematic.",
+                    video_prompt: "Abstract fluid chemistry reaction with glowing sparks, vibrant colors swirling together, hyper realistic macro photography, beautiful abstract art --ar 9:16",
+                    generatedImage: "https://images.unsplash.com/photo-1515621061946-eff1c2a352bd?auto=format&fit=crop&w=800&q=80"
+                },
+                {
+                    scene_number: 3,
+                    narration_style_direction: "Suara wanita muda, santai, ramah, gaya narasi konten edukasi TikTok.",
+                    narration: "Tapi uniknya, otak sendiri tidak bisa merasakan sakit karena tidak memiliki saraf penerima rasa sakit. Menakjubkan bukan?",
+                    visual_description: "Happy young person touching head smiling, warm studio lighting.",
+                    video_prompt: "Portrait of a cheerful young woman smiling pointing gently to her head, warm studio background, cinematic lighting, shallow depth of field --ar 9:16",
+                    generatedImage: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=800&q=80"
+                }
+            ]
+        }
+    ];
+
+    // --- Action: Run Demo Simulation ---
+    const runDemoSimulation = async () => {
+        setErrorMsg("");
+        setIsGeneratingText(true);
+        setScenes([]);
+        setIsDemo(true);
+
+        // Analyze topic keyword to match best demo story, otherwise pick random
+        const query = topic.toLowerCase();
+        let selectedDemo = DEMO_STORIES[2]; // Default to general "otak"
+
+        if (query.includes("laut") || query.includes("mariana") || query.includes("air") || query.includes("dalam") || query.includes("misteri")) {
+            selectedDemo = DEMO_STORIES[0];
+        } else if (query.includes("mars") || query.includes("angkasa") || query.includes("bintang") || query.includes("planet")) {
+            selectedDemo = DEMO_STORIES[1];
+        }
+
+        // Set the input field to match the demo topic beautifully
+        setTopic(selectedDemo.title);
+
+        // Simulate step 1: Generate script text
+        await new Promise(resolve => setTimeout(resolve, 2500));
+        
+        // Populate scenes without images first to trigger loading animations
+        const emptyImageScenes = selectedDemo.scenes.map(s => ({ ...s, generatedImage: null }));
+        setScenes(emptyImageScenes);
+        setIsGeneratingText(false);
+
+        // Simulate step 2: Load images sequentially
+        for (let i = 0; i < selectedDemo.scenes.length; i++) {
+            setLoadingImages(prev => ({ ...prev, [indexToKey(i)]: true }));
+            await new Promise(resolve => setTimeout(resolve, 1500));
+            
+            setScenes(prev => {
+                const updated = [...prev];
+                updated[i] = { ...updated[i], generatedImage: selectedDemo.scenes[i].generatedImage };
+                return updated;
+            });
+            setLoadingImages(prev => ({ ...prev, [indexToKey(i)]: false }));
+        }
+    };
+
+    const indexToKey = (index) => String(index);
+
+    // --- Helper: Call Gemini for Text (Real API Mode) ---
+    const generateStory = async () => {
+        if (!apiKey) {
+            // Fallback to Demo mode if user forces generate without Key
+            runDemoSimulation();
+            return;
+        }
+        setIsDemo(false);
+        setErrorMsg("");
+        setIsGeneratingText(true);
+        setScenes([]);
+
+        const targetLang = customLanguage || language;
+        const ratioText = ratio === "9:16" ? "Vertical (9:16)" : "Widescreen (16:9)";
+
+        // Map selection to clear descriptions for the LLM prompt
+        let voiceInstruction = "";
+        if (narratorVoice === "Pria - Dokumenter Epik") voiceInstruction = "The narrator's voice character MUST be consistently: Deep, authoritative adult male voice, epic documentary style (like Morgan Freeman or David Attenborough), serious and engaging tone.";
+        else if (narratorVoice === "Wanita - Menegangkan") voiceInstruction = "The narrator's voice character MUST be consistently: Adult female voice, mysterious, suspenseful, whispering but clear, suitable for horror or true crime mysteries.";
+        else if (narratorVoice === "Pria Muda - Tiktok Ceria") voiceInstruction = "The narrator's voice character MUST be consistently: Young adult male voice, highly energetic, fast-paced, friendly, typical Gen-Z TikTok/Reels influencer style.";
+        else if (narratorVoice === "Wanita Muda - Santai") voiceInstruction = "The narrator's voice character MUST be consistently: Young adult female voice, relaxed, conversational, friendly, soft-spoken vlogger style.";
+        else if (narratorVoice === "Anak Laki - Penasaran") voiceInstruction = "The narrator's voice character MUST be consistently: Young boy voice (around 8-10 years old), curious, slightly dramatic, highly expressive and energetic.";
+        else if (narratorVoice === "Anak Perempuan - Ceria") voiceInstruction = "The narrator's voice character MUST be consistently: Young girl voice (around 8-10 years old), sweet, cheerful, innocent, highly expressive and engaging.";
+        else if (narratorVoice === "Otomatis") voiceInstruction = "Determine ONE consistent, highly specific voice character (including gender, approximate age, and exact vocal tone/emotion) that best fits the topic.";
+
+        const prompt = `
+            You are a professional documentary filmmaker and expert copywriter. Create a ${sceneCount}-scene storyboard for a "Fun Fact" short video about: "${topic}".
+            
+            Style: ${theme}
+            Aspect Ratio: ${ratioText}
+            Narration Language: ${targetLang}
+            
+            CRITICAL WRITING & CONSISTENCY DIRECTIONS:
+            1. Make the script highly engaging, with a powerful hook in scene 1 and smooth transitions between scenes.
+            2. ${voiceInstruction} Determine ONE consistent narration character tone & vocal style for the ENTIRE video based on the instruction or topic.
+            3. The "narration_style_direction" MUST be identical and 100% consistent across all scene objects to ensure the voice character, age style, gender, and emotion remains the exact same throughout the entire video. Must explicitly specify the narrator's detailed vocal characteristics (e.g., "Suara pria dewasa, berat, tempo lambat, gaya dokumenter epik") inside this field in ${targetLang}.
+            4. The video prompt must be highly detailed, cinematographic prompt for AI Video Generator (like Veo/Sora). Must be in English. End with aspect ratio ${ratio === '16:9' ? '--ar 16:9' : '--ar 9:16'}.
+
+            Output MUST be valid JSON array with exactly ${sceneCount} objects. No markdown formatting.
+            Structure:
+            [
+                {
+                    "scene_number": 1,
+                    "narration_style_direction": "The EXACT SAME consistent description of the narration voice character in ${targetLang} for the entire video",
+                    "narration": "Narration text in ${targetLang}",
+                    "visual_description": "Short visual description for image generator (English)",
+                    "video_prompt": "Detailed cinematic prompt for AI Video Generator in English"
+                }
+            ]
+        `;
+
+        try {
+            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent`, {
+                method: 'POST',
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'x-goog-api-key': apiKey
+                },
+                body: JSON.stringify({
+                    contents: [{ parts: [{ text: prompt }] }]
+                })
+            });
+
+            const data = await response.json();
+            
+            if (data.error) throw new Error(data.error.message);
+
+            let text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+            if (!text) throw new Error("No text generated");
+
+            // Clean markdown if present
+            text = text.replace(/```json/g, '').replace(/```/g, '').trim();
+            
+            const parsedScenes = JSON.parse(text);
+            setScenes(parsedScenes);
+            setIsGeneratingText(false); // Done with text gen
+            
+            // Trigger image generation sequentially with delay to avoid rate limits
+            for (let i = 0; i < parsedScenes.length; i++) {
+                generateSceneImage(i, parsedScenes[i].visual_description, theme, ratio);
+                await new Promise(resolve => setTimeout(resolve, 2000));
+            }
+
+        } catch (err) {
+            console.error(err);
+            setErrorMsg("Gagal membuat cerita. Coba lagi atau cek koneksi API.");
+            setIsGeneratingText(false);
+        }
+    };
+
+    // --- Helper: Call Gemini Image API for Images ---
+    const generateSceneImage = async (index, visualDesc, style, currentRatio) => {
+        setLoadingImages(prev => ({ ...prev, [indexToKey(index)]: true }));
+        
+        const ratioKeywords = currentRatio === "9:16" ? "vertical composition, tall" : "wide angle, cinematic wide shot";
+        const imagePrompt = `${visualDesc}, ${style} style, ${ratioKeywords}, high quality, 8k resolution, cinematic lighting`;
+
+        try {
+            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-image:generateContent`, {
+                method: 'POST',
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'x-goog-api-key': apiKey
+                },
+                body: JSON.stringify({
+                    contents: [{ parts: [{ text: imagePrompt }] }],
+                    generationConfig: {
+                        responseModalities: ["IMAGE"]
+                    }
+                })
+            });
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(`API Error ${response.status}: ${errorText}`);
+            }
+
+            const data = await response.json();
+            const imagePart = data.candidates?.[0]?.content?.parts?.find(part => part.inlineData);
+            
+            if (imagePart) {
+                const base64Image = imagePart.inlineData.data;
+                const mimeType = imagePart.inlineData.mimeType || 'image/png';
+                const imageUrl = `data:${mimeType};base64,${base64Image}`;
+                
+                setScenes(prev => {
+                    const newScenes = [...prev];
+                    if (newScenes[index]) {
+                        newScenes[index] = { ...newScenes[index], generatedImage: imageUrl };
+                    }
+                    return newScenes;
+                });
+            } else {
+                console.error("No image returned from API", data);
+            }
+
+        } catch (err) {
+            console.error(`Image gen failed for scene ${index}`, err);
+        } finally {
+            setLoadingImages(prev => ({ ...prev, [indexToKey(index)]: false }));
+        }
+    };
+
+    // --- Helper: Download Image ---
+    const downloadImage = (dataUrl, filename) => {
+        const link = document.createElement('a');
+        link.href = dataUrl;
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    };
+
+    // --- Helper: Copy to Clipboard ---
+    const copyToClipboard = (text) => {
+        const textArea = document.createElement("textarea");
+        textArea.value = text;
+        
+        textArea.style.top = "0";
+        textArea.style.left = "0";
+        textArea.style.position = "fixed";
+        textArea.style.opacity = "0"; 
+
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+
+        try {
+            const successful = document.execCommand('copy');
+            if (successful) {
+                setCopySuccess("Teks disalin!");
+                setTimeout(() => setCopySuccess(""), 2000);
+            } else {
+                console.error('Copy command failed.');
+                setErrorMsg("Gagal menyalin otomatis. Mohon salin manual.");
+            }
+        } catch (err) {
+            console.error('Unable to copy', err);
+            setErrorMsg("Tidak dapat menyalin teks.");
+        }
+
+        document.body.removeChild(textArea);
+    };
+
+    return (
+        <div className="min-h-screen bg-[#0f172a] text-[#e2e8f0] font-sans p-4 md:p-8">
+            <style>
+                {`
+                .glass-panel {
+                    background: rgba(30, 41, 59, 0.7);
+                    backdrop-filter: blur(12px);
+                    border: 1px solid rgba(255, 255, 255, 0.08);
+                }
+                .loading-shimmer {
+                    background: linear-gradient(90deg, #1e293b 25%, #334155 50%, #1e293b 75%);
+                    background-size: 200% 100%;
+                    animation: shimmer 1.5s infinite;
+                }
+                @keyframes shimmer {
+                    0% { background-position: 200% 0; }
+                    100% { background-position: -200% 0; }
+                }
+                .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+                .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+                .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
+                .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #475569; }
+                
+                .fade-in { animation: fadeIn 0.5s ease-in-out; }
+                @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+                `}
+            </style>
+            
+            {/* Feedback Toast */}
+            {copySuccess && (
+                <div className="fixed top-4 right-4 z-50 bg-green-500/90 text-white px-4 py-2 rounded-full shadow-lg text-sm font-semibold animate-in fade-in slide-in-from-top-2">
+                    {copySuccess}
+                </div>
+            )}
+            
+            <div className="max-w-7xl mx-auto">
+                {/* Header */}
+                <header className="mb-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                    <div>
+                        <h1 className="text-4xl font-extrabold bg-gradient-to-r from-cyan-400 via-blue-500 to-indigo-500 bg-clip-text text-transparent flex items-center gap-3">
+                            <Film className="text-cyan-400 w-8 h-8 md:w-10 md:h-10" /> Wilhen Cinefact AI
+                        </h1>
+                        <p className="text-gray-400 text-sm md:text-base mt-2 max-w-lg">
+                            Generator storyboard otomatis untuk pembuatan video pendek. Buat naskah narasi dan prompt video visual dalam sekejap.
+                        </p>
+                    </div>
+                    <div className="flex gap-2 text-xs font-mono text-gray-500 bg-slate-900/50 px-3 py-1 rounded-full border border-slate-800">
+                        <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse my-auto"></span>
+                        Powered by Gemini & Imagen (with Demo Mode)
+                    </div>
+                </header>
+
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                    
+                    {/* INPUT PANEL (Left Side) */}
+                    <div className="lg:col-span-4 space-y-6">
+                        <div className="glass-panel p-6 rounded-2xl shadow-2xl sticky top-4">
+                            <h2 className="text-xl font-semibold mb-6 flex items-center gap-2 text-white border-b border-white/10 pb-4">
+                                <Settings className="w-5 h-5 text-cyan-400" /> Konfigurasi Video
+                            </h2>
+
+                            {/* API Key Manager */}
+                            <div className="bg-slate-900/60 p-4 rounded-xl border border-slate-800 mb-5 space-y-3">
+                                <div className="flex justify-between items-center">
+                                    <label className="text-xs uppercase tracking-wider text-cyan-400 font-bold flex items-center gap-1">
+                                        🔑 API Key Gemini
+                                    </label>
+                                    <button 
+                                        onClick={() => {
+                                            setTempKey(apiKey);
+                                            setGuideStep(1);
+                                            setIsGuideOpen(true);
+                                        }}
+                                        className="text-[10px] bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 px-2 py-1 rounded border border-cyan-500/30 transition-all font-semibold flex items-center gap-1"
+                                    >
+                                        💡 Butuh Key?
+                                    </button>
+                                </div>
+                                <div className="flex gap-2">
+                                    <input 
+                                        type="password"
+                                        value={apiKey}
+                                        onChange={(e) => {
+                                            const key = e.target.value.trim();
+                                            setApiKey(key);
+                                            if (key) {
+                                                localStorage.setItem("cinefact_api_key", key);
+                                            } else {
+                                                localStorage.removeItem("cinefact_api_key");
+                                            }
+                                        }}
+                                        placeholder="Kosongkan untuk Mode Demo instan..."
+                                        className="flex-1 bg-slate-950/80 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white placeholder-slate-600 focus:border-cyan-500 outline-none transition font-mono"
+                                    />
+                                    {apiKey && (
+                                        <button 
+                                            onClick={() => {
+                                                setApiKey("");
+                                                localStorage.removeItem("cinefact_api_key");
+                                            }}
+                                            className="px-2.5 py-2 bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/30 rounded-lg text-xs transition shrink-0"
+                                            title="Hapus Key"
+                                        >
+                                            Hapus
+                                        </button>
+                                    )}
+                                </div>
+                                <p className="text-[10px] text-slate-400 leading-normal">
+                                    {apiKey ? 
+                                        "Kunci disimpan secara aman di browser Anda. Anda menggunakan akses API penuh." : 
+                                        "Masukkan API Key untuk hasil kustom. Tanpa API Key, Anda otomatis masuk ke Mode Demo dengan sampel berkualitas tinggi."
+                                    }
+                                </p>
+                            </div>
+
+                            {/* Topic Input */}
+                            <div className="space-y-2 mb-5">
+                                <label className="text-xs uppercase tracking-wider text-cyan-400 font-bold">Judul / Topik Fakta</label>
+                                <textarea 
+                                    rows={3}
+                                    value={topic}
+                                    onChange={(e) => setTopic(e.target.value)}
+                                    placeholder={apiKey ? "Contoh: 5 Fakta mengerikan tentang laut dalam..." : "Ketik 'laut' atau 'mars' untuk mencoba simulasi demo bertema..."}
+                                    className="w-full bg-slate-900/80 border border-slate-700 rounded-xl p-4 text-white placeholder-slate-500 focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500 outline-none transition resize-none text-sm leading-relaxed"
+                                />
+                                {!apiKey && (
+                                    <div className="flex flex-wrap gap-1.5 mt-1">
+                                        <button onClick={() => setTopic("Misteri Kedalaman Laut")} className="text-[10px] bg-slate-800 hover:bg-slate-700 text-cyan-300 px-2 py-1 rounded">Topik Laut 🌊</button>
+                                        <button onClick={() => setTopic("Misteri Planet Mars")} className="text-[10px] bg-slate-800 hover:bg-slate-700 text-orange-300 px-2 py-1 rounded">Topik Mars 🚀</button>
+                                        <button onClick={() => setTopic("Rahasia Otak Manusia")} className="text-[10px] bg-slate-800 hover:bg-slate-700 text-purple-300 px-2 py-1 rounded">Topik Otak 🧠</button>
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* Theme Selection */}
+                            <div className="space-y-2 mb-5">
+                                <label className="text-xs uppercase tracking-wider text-gray-400 font-bold">Gaya Visual</label>
+                                <div className="relative">
+                                    <select 
+                                        value={theme}
+                                        onChange={(e) => setTheme(e.target.value)}
+                                        disabled={!apiKey}
+                                        className="w-full bg-slate-900/80 border border-slate-700 rounded-xl p-3 text-white outline-none appearance-none focus:border-cyan-500 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                                    >
+                                        <option value="Cinematic Realistic">Realistis (Cinematic 8K)</option>
+                                        <option value="3D Disney Pixar Animation">Animasi 3D (Pixar Style)</option>
+                                        <option value="2D Anime Style">Anime Jepang (Studio Ghibli)</option>
+                                        <option value="Claymotion Animation">Animasi Claymotion (Aardman Style)</option>
+                                        <option value="Vintage Documentary">Dokumenter Klasik (Vintage)</option>
+                                        <option value="Cyberpunk Neon">Cyberpunk / Futuristik</option>
+                                        <option value="Dark Horror">Dark Horror / Misteri</option>
+                                        <option value="Minimalist Vector">Vektor Minimalis</option>
+                                    </select>
+                                    <div className="absolute right-4 top-1/2 transform -translate-y-1/2 pointer-events-none text-gray-400">
+                                        ▼
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Ratio Selection */}
+                            <div className="space-y-2 mb-5">
+                                <label className="text-xs uppercase tracking-wider text-gray-400 font-bold">Format Video</label>
+                                <div className="grid grid-cols-2 gap-3">
+                                    <button 
+                                        onClick={() => setRatio("9:16")}
+                                        className={`p-3 rounded-xl border flex items-center justify-center gap-3 transition-all ${ratio === "9:16" ? 'bg-cyan-500/20 border-cyan-500 text-cyan-400 shadow-[0_0_15px_rgba(6,182,212,0.15)]' : 'bg-slate-900/50 border-slate-700 hover:bg-slate-800 text-slate-400'}`}
+                                    >
+                                        <div className="w-3 h-5 border-2 border-current rounded-[1px]"></div>
+                                        <span className="text-xs font-semibold">Tiktok/Reels (9:16)</span>
+                                    </button>
+                                    <button 
+                                        onClick={() => setRatio("16:9")}
+                                        className={`p-3 rounded-xl border flex items-center justify-center gap-3 transition-all ${ratio === "16:9" ? 'bg-cyan-500/20 border-cyan-500 text-cyan-400 shadow-[0_0_15px_rgba(6,182,212,0.15)]' : 'bg-slate-900/50 border-slate-700 hover:bg-slate-800 text-slate-400'}`}
+                                    >
+                                        <div className="w-5 h-3 border-2 border-current rounded-[1px]"></div>
+                                        <span className="text-xs font-semibold">YouTube (16:9)</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            {/* Narrator Voice Character Selection */}
+                            <div className="space-y-2 mb-5">
+                                <label className="text-xs uppercase tracking-wider text-gray-400 font-bold">Karakter Suara VO</label>
+                                <div className="relative">
+                                    <select 
+                                        value={narratorVoice}
+                                        onChange={(e) => setNarratorVoice(e.target.value)}
+                                        disabled={!apiKey}
+                                        className="w-full bg-slate-900/80 border border-slate-700 rounded-xl p-3 text-white outline-none appearance-none focus:border-cyan-500 transition text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                                    >
+                                        <option value="Otomatis">🤖 Otomatis (Sesuai Topik)</option>
+                                        <option value="Pria - Dokumenter Epik">🎙️ Pria Dewasa - Dokumenter Epik (Berat)</option>
+                                        <option value="Pria Muda - Tiktok Ceria">📱 Pria Muda - TikTok Ceria (Cepat)</option>
+                                        <option value="Wanita - Menegangkan">🕵️‍♀️ Wanita Dewasa - Misteri/Menegangkan</option>
+                                        <option value="Wanita Muda - Santai">☕ Wanita Muda - Santai (Vlog Style)</option>
+                                        <option value="Anak Laki - Penasaran">👦 Anak Laki-laki - Ceria & Penasaran</option>
+                                        <option value="Anak Perempuan - Ceria">👧 Anak Perempuan - Manis & Ceria</option>
+                                    </select>
+                                    <div className="absolute right-4 top-1/2 transform -translate-y-1/2 pointer-events-none text-gray-400">
+                                        ▼
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Language Selection */}
+                            <div className="space-y-2 mb-6">
+                                <label className="text-xs uppercase tracking-wider text-gray-400 font-bold">Bahasa Narasi</label>
+                                <select 
+                                    value={language}
+                                    onChange={(e) => {
+                                        setLanguage(e.target.value);
+                                        if(e.target.value !== "Custom") setCustomLanguage("");
+                                    }}
+                                    disabled={!apiKey}
+                                    className="w-full bg-slate-900/80 border border-slate-700 rounded-xl p-3 text-white outline-none mb-2 focus:border-cyan-500 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                                >
+                                    <option value="Bahasa Indonesia">Bahasa Indonesia</option>
+                                    <option value="English">English</option>
+                                    <option value="Japanese">Japanese</option>
+                                    <option value="Javanese">Bahasa Jawa</option>
+                                    <option value="Sunda">Bahasa Sunda</option>
+                                    <option value="Custom">Lainnya...</option>
+                                </select>
+                                {language === "Custom" && (
+                                    <input 
+                                        type="text" 
+                                        value={customLanguage}
+                                        onChange={(e) => setCustomLanguage(e.target.value)}
+                                        placeholder="Ketik nama bahasa..."
+                                        className="w-full bg-slate-900/80 border border-slate-700 rounded-xl p-3 text-white text-sm focus:border-cyan-500 outline-none animate-in fade-in slide-in-from-top-1"
+                                    />
+                                )}
+                            </div>
+
+                            {/* Scene Count Selection */}
+                            <div className="space-y-2 mb-8">
+                                <label className="text-xs uppercase tracking-wider text-gray-400 font-bold">Jumlah Scene</label>
+                                <div className="flex items-center gap-4">
+                                    <input 
+                                        type="range" 
+                                        min="3" 
+                                        max="10" 
+                                        value={sceneCount}
+                                        onChange={(e) => setSceneCount(Number(e.target.value))}
+                                        disabled={!apiKey}
+                                        className="flex-1 accent-cyan-500 h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                                    />
+                                    <span className="bg-slate-900/80 border border-slate-700 rounded-xl px-4 py-2 text-cyan-400 font-bold min-w-[3rem] text-center shadow-inner">
+                                        {apiKey ? sceneCount : 3}
+                                    </span>
+                                </div>
+                                <p className="text-[10px] text-slate-500 text-right">{apiKey ? "Maksimal 10 scene" : "Terkunci 3 scene pada Mode Demo"}</p>
+                            </div>
+
+                            {/* Generate Button */}
+                            <button 
+                                onClick={apiKey ? generateStory : runDemoSimulation}
+                                disabled={isGeneratingText}
+                                className={`w-full py-4 text-white font-bold rounded-xl shadow-lg transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 text-lg ${
+                                    apiKey 
+                                    ? 'bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 shadow-cyan-500/20' 
+                                    : 'bg-gradient-to-r from-yellow-500 to-orange-600 hover:from-yellow-400 hover:to-orange-500 shadow-yellow-500/20'
+                                }`}
+                            >
+                                {isGeneratingText ? (
+                                    <><RefreshCw className="animate-spin w-5 h-5" /> Merancang...</>
+                                ) : apiKey ? (
+                                    <><Camera className="w-5 h-5" /> Buat Storyboard (API)</>
+                                ) : (
+                                    <><Play className="w-5 h-5" /> Coba Mode Demo</>
+                                )}
+                            </button>
+                            
+                            {errorMsg && (
+                                <div className="mt-4 p-4 bg-red-500/10 border border-red-500/30 rounded-xl text-red-200 text-sm flex gap-3 items-start animate-in slide-in-from-bottom-2">
+                                    <AlertCircle className="w-5 h-5 shrink-0 text-red-400" />
+                                    {errorMsg}
+                                </div>
+                            )}
+                        </div>
+                    </div>
+
+                    {/* RESULTS PANEL (Right Side) */}
+                    <div className="lg:col-span-8">
+                        {scenes.length === 0 && !isGeneratingText ? (
+                            <div className="h-full flex flex-col items-center justify-center text-gray-500 glass-panel rounded-2xl p-12 min-h-[500px] border-dashed border-2 border-slate-700">
+                                <div className="bg-slate-800/50 p-6 rounded-full mb-6">
+                                    <Film className="w-16 h-16 text-slate-600" />
+                                </div>
+                                <h3 className="text-xl font-bold text-slate-300 mb-2">Belum Ada Storyboard</h3>
+                                <p className="text-slate-500 max-w-sm text-center">Isi detail video di panel sebelah kiri dan klik tombol di bawah untuk memulai secara gratis.</p>
+                            </div>
+                        ) : (
+                            <div className="space-y-8">
+                                {/* Demo Mode Notification Banner */}
+                                {isDemo && !isGeneratingText && (
+                                    <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-xl p-4 text-xs text-yellow-200 flex justify-between items-center animate-in fade-in">
+                                        <div className="flex gap-2 items-center">
+                                            <span className="w-2.5 h-2.5 bg-yellow-400 rounded-full animate-ping"></span>
+                                            <span>Anda sedang melihat <strong>Hasil Simulasi Mode Demo</strong>. Masukkan API Key di panel kiri untuk membuat topik kustom Anda!</span>
+                                        </div>
+                                    </div>
+                                )}
+
+                                {/* Loading State for Text */}
+                                {isGeneratingText && (
+                                    <div className="glass-panel p-12 rounded-2xl flex flex-col items-center justify-center min-h-[400px]">
+                                        <div className="relative w-20 h-20 mb-6">
+                                            <div className="absolute top-0 left-0 w-full h-full border-4 border-slate-700 rounded-full"></div>
+                                            <div className="absolute top-0 left-0 w-full h-full border-4 border-cyan-500 rounded-full border-t-transparent animate-spin"></div>
+                                        </div>
+                                        <h3 className="text-xl font-bold text-white mb-2">Merancang Storyboard</h3>
+                                        <p className="text-cyan-400/80 animate-pulse text-sm">Sedang menulis naskah & menyiapkan visual...</p>
+                                    </div>
+                                )}
+
+                                {/* Scenes List with Unified Output */}
+                                {!isGeneratingText && scenes.map((scene, index) => {
+                                    // Gabungan naskah, nada narasi, dan prompt video menjadi satu teks terformat
+                                    const combinedOutputText = `[SCENE ${scene.scene_number}]\n\n* NADA & GAYA NARASI:\n[${scene.narration_style_direction || 'Normal'}]\n\n* NASKAH NARASI:\n"${scene.narration}"\n\n* PROMPT VIDEO:\n${scene.video_prompt}`;
+
+                                    return (
+                                        <div key={index} className="glass-panel rounded-2xl overflow-hidden shadow-xl transition-all hover:border-cyan-500/30 flex flex-col md:flex-row group fade-in" style={{animationDelay: `${index * 150}ms`}}>
+                                            
+                                            {/* Image Section */}
+                                            <div className={`relative md:w-5/12 bg-black shrink-0 ${ratio === "9:16" ? 'h-[500px] md:h-auto md:min-h-[400px]' : 'h-64 md:h-auto'}`}>
+                                                {scene.generatedImage ? (
+                                                    <>
+                                                        <img 
+                                                            src={scene.generatedImage} 
+                                                            alt={`Scene ${scene.scene_number}`} 
+                                                            className="w-full h-full object-cover transition duration-700 group-hover:scale-105"
+                                                        />
+                                                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60"></div>
+                                                        
+                                                        {/* Download Image Button */}
+                                                        <button
+                                                            onClick={() => downloadImage(scene.generatedImage, `Wilhen_Cinefact_Scene_${scene.scene_number}.png`)}
+                                                            className="absolute bottom-4 right-4 bg-white/10 hover:bg-cyan-500 text-white p-2 rounded-full backdrop-blur-md transition-all border border-white/20 transform translate-y-2 opacity-0 group-hover:opacity-100 group-hover:translate-y-0"
+                                                            title="Download Gambar High-Res"
+                                                        >
+                                                            <Download className="w-5 h-5" />
+                                                        </button>
+                                                    </>
+                                                ) : loadingImages[indexToKey(index)] ? (
+                                                    <div className="w-full h-full loading-shimmer flex flex-col items-center justify-center text-gray-400 gap-3">
+                                                        <ImageIcon className="w-10 h-10 animate-pulse text-slate-500" />
+                                                        <span className="text-xs uppercase tracking-widest text-slate-500 font-bold">Generating Image...</span>
+                                                    </div>
+                                                ) : (
+                                                    <div className="w-full h-full bg-slate-900 flex flex-col items-center justify-center text-gray-500 p-6 text-center">
+                                                        <ImageIcon className="w-12 h-12 mb-3 opacity-20" />
+                                                        <span className="text-xs mb-3 block">Gagal memuat gambar</span>
+                                                        <button 
+                                                            onClick={() => generateSceneImage(index, scene.visual_description, theme, ratio)}
+                                                            className="px-4 py-2 bg-slate-800 rounded-full text-xs hover:bg-slate-700 border border-slate-700 transition"
+                                                        >
+                                                            Coba Lagi
+                                                        </button>
+                                                    </div>
+                                                )}
+                                                
+                                                {/* Scene Badge */}
+                                                <div className="absolute top-4 left-4">
+                                                    <div className="bg-black/40 backdrop-blur-md px-3 py-1 rounded-full text-xs font-bold text-white border border-white/10 flex items-center gap-2 shadow-lg">
+                                                        <span className="w-2 h-2 rounded-full bg-cyan-400"></span>
+                                                        SCENE {scene.scene_number}
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            {/* Content Section (Merged Output Box) */}
+                                            <div className="flex-1 p-6 md:p-8 flex flex-col justify-between">
+                                                <div className="space-y-4">
+                                                    <div className="flex justify-between items-center border-b border-slate-700/60 pb-3">
+                                                        <h3 className="text-cyan-400 text-sm font-bold uppercase tracking-wider">
+                                                            Naskah & Prompt Video
+                                                        </h3>
+                                                        <button 
+                                                            onClick={() => copyToClipboard(combinedOutputText)}
+                                                            className="text-xs flex items-center gap-1.5 bg-cyan-500/10 hover:bg-cyan-500 text-cyan-400 hover:text-white transition px-3 py-1.5 rounded-lg border border-cyan-500/20"
+                                                            title="Salin Naskah dan Prompt Sekaligus"
+                                                        >
+                                                            <Copy className="w-3.5 h-3.5" /> Salin Semua
+                                                        </button>
+                                                    </div>
+                                                    
+                                                    {/* Unified Preformatted Output block */}
+                                                    <div className="bg-slate-900/60 rounded-xl p-5 border border-slate-800 font-mono text-xs text-slate-300 space-y-4 overflow-y-auto max-h-[300px] custom-scrollbar select-all">
+                                                        <div>
+                                                            <span className="text-cyan-400 font-bold block mb-1">🎭 NADA & GAYA NARASI:</span>
+                                                            <p className="font-sans text-xs text-cyan-200 italic leading-relaxed pl-3 border-l-2 border-cyan-500/40">
+                                                                [{scene.narration_style_direction || 'Normal'}]
+                                                            </p>
+                                                        </div>
+                                                        <div>
+                                                            <span className="text-yellow-500 font-bold block mb-1">📢 NASKAH NARASI:</span>
+                                                            <p className="font-sans text-sm text-white italic leading-relaxed pl-3 border-l-2 border-yellow-500/40">
+                                                                "{scene.narration}"
+                                                            </p>
+                                                        </div>
+                                                        <div>
+                                                            <span className="text-purple-400 font-bold block mb-1">🎬 PROMPT VIDEO:</span>
+                                                            <p className="text-slate-400 leading-relaxed pl-3 border-l-2 border-purple-500/40">
+                                                                {scene.video_prompt}
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div className="pt-4 border-t border-slate-800/60 mt-4">
+                                                    <p className="text-[10px] text-slate-500">
+                                                        Klik tombol <strong>"Salin Semua"</strong> di atas untuk menyalin gabungan gaya narasi, naskah, & prompt dalam format siap pakai.
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    );
+                                })}
+                                
+                                <div className="flex justify-center pt-8 pb-12">
+                                    <button 
+                                        onClick={apiKey ? generateStory : runDemoSimulation}
+                                        className="px-8 py-3 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-full font-medium transition border border-slate-700 flex items-center gap-2"
+                                    >
+                                        <RefreshCw className="w-4 h-4" /> Buat Variasi Baru
+                                    </button>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            </div>
+
+            {/* MODAL ASISTEN API KEY INTERAKTIF */}
+            {isGuideOpen && (
+                <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4 animate-in fade-in duration-200">
+                    <div className="glass-panel max-w-2xl w-full rounded-2xl overflow-hidden shadow-2xl flex flex-col max-h-[90vh] border border-cyan-500/20">
+                        {/* Header Modal */}
+                        <div className="p-5 border-b border-white/10 flex justify-between items-center bg-slate-900/80">
+                            <h3 className="text-lg font-bold text-white flex items-center gap-2">
+                                <span className="bg-cyan-500/20 text-cyan-400 p-1.5 rounded-lg text-sm">🔑</span>
+                                Asisten Pembuat API Key Gemini
+                            </h3>
+                            <button 
+                                onClick={() => setIsGuideOpen(false)}
+                                className="text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 p-1.5 rounded-lg transition"
+                            >
+                                ✕
+                            </button>
+                        </div>
+
+                        {/* Progress Stepper */}
+                        <div className="bg-slate-900/40 px-6 py-4 border-b border-white/5 flex justify-between items-center gap-1 overflow-x-auto">
+                            {[1, 2, 3, 4].map((step) => (
+                                <button 
+                                    key={step}
+                                    onClick={() => setGuideStep(step)}
+                                    className="flex items-center gap-2 focus:outline-none shrink-0"
+                                >
+                                    <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold transition-all ${
+                                        guideStep === step 
+                                            ? 'bg-cyan-500 text-black shadow-[0_0_10px_rgba(6,182,212,0.4)]' 
+                                            : guideStep > step 
+                                                ? 'bg-emerald-500/20 border border-emerald-500 text-emerald-400' 
+                                                : 'bg-slate-800 border border-slate-700 text-slate-500'
+                                    }`}>
+                                        {guideStep > step ? "✓" : step}
+                                    </div>
+                                    <span className={`text-xs font-semibold ${guideStep === step ? 'text-white' : 'text-slate-500'}`}>
+                                        {step === 1 && "Masuk"}
+                                        {step === 2 && "Cari Menu"}
+                                        {step === 3 && "Buat Kunci"}
+                                        {step === 4 && "Tempel & Selesai"}
+                                    </span>
+                                    {step < 4 && <div className="w-6 h-[1px] bg-slate-800 hidden sm:block"></div>}
+                                </button>
+                            ))}
+                        </div>
+
+                        {/* Detail Konten Step */}
+                        <div className="p-6 md:p-8 overflow-y-auto custom-scrollbar flex-1 bg-slate-900/20">
+                            {guideStep === 1 && (
+                                <div className="space-y-4 animate-in fade-in duration-300">
+                                    <div className="bg-cyan-500/10 border border-cyan-500/20 p-4 rounded-xl text-xs text-cyan-300 leading-relaxed">
+                                        💡 <strong>Tips Agar Cepat:</strong> Saat Anda mengklik tombol biru di bawah, Google AI Studio akan terbuka di tab baru. <strong>Biarkan tab aplikasi ini tetap terbuka</strong> agar Anda bisa kembali ke sini dengan mudah saat sudah mendapatkan kuncinya!
+                                    </div>
+                                    <h4 className="text-base font-bold text-white">Langkah 1: Buka Google AI Studio</h4>
+                                    <p className="text-sm text-slate-300 leading-relaxed">
+                                        Klik tombol di bawah untuk membuka konsol pengembang AI Google di tab baru, lalu masuk (*Sign In*) menggunakan akun Google Anda.
+                                    </p>
+                                    <div className="pt-4 flex justify-center">
+                                        <a 
+                                            href="https://aistudio.google.com/" 
+                                            target="_blank" 
+                                            rel="noreferrer"
+                                            className="px-6 py-3 bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold rounded-xl shadow-lg shadow-cyan-500/20 transition flex items-center gap-2 animate-bounce"
+                                        >
+                                            Buka Google AI Studio ↗
+                                        </a>
+                                    </div>
+                                </div>
+                            )}
+
+                            {guideStep === 2 && (
+                                <div className="space-y-4 animate-in fade-in duration-300">
+                                    <h4 className="text-base font-bold text-white">Langkah 2: Temukan Menu "Get API key"</h4>
+                                    <p className="text-sm text-slate-300 leading-relaxed">
+                                        Setelah berhasil masuk, perhatikan panel navigasi di sebelah kiri layar Anda. Cari opsi yang bertuliskan <strong>"Get API key"</strong> yang memiliki simbol kunci kecil.
+                                    </p>
+                                    <div className="bg-slate-950 rounded-lg p-3 font-mono text-[10px] text-slate-400 border border-slate-800 max-w-md mx-auto">
+                                        <div>┌──────────────────────────────────────┐</div>
+                                        <div>│  🏠 Home                             │</div>
+                                        <div className="text-cyan-400 font-bold">│  🔑 Get API key  ◄─── (KLIK DI SINI) │</div>
+                                        <div>│  📊 Dashboard                        │</div>
+                                        <div>└──────────────────────────────────────┘</div>
+                                    </div>
+                                </div>
+                            )}
+
+                            {guideStep === 3 && (
+                                <div className="space-y-4 animate-in fade-in duration-300">
+                                    <h4 className="text-base font-bold text-white">Langkah 3: Buat Proyek & Kunci Baru</h4>
+                                    <p className="text-sm text-slate-300 leading-relaxed font-normal">
+                                        1. Klik tombol biru bertuliskan <strong className="text-cyan-400">"Create API key"</strong>.<br/>
+                                        2. Pada jendela pilihan yang muncul, pilih opsi paling atas: <strong className="text-white">"Create API key in new project"</strong>. Google akan otomatis membuatkan penampung gratis di sistem mereka.
+                                    </p>
+                                    <div className="bg-slate-950 rounded-lg p-3 font-mono text-[10px] text-slate-400 border border-slate-800 max-w-md mx-auto">
+                                        <div>┌──────────────────────────────────────┐</div>
+                                        <div>│  Create API key                      │</div>
+                                        <div>├──────────────────────────────────────┤</div>
+                                        <div className="text-emerald-400 font-bold">│ 🟩 Create API key in new project     │</div>
+                                        <div>│ ⬜ Create API key in existing project│</div>
+                                        <div>└──────────────────────────────────────┘</div>
+                                    </div>
+                                </div>
+                            )}
+
+                            {guideStep === 4 && (
+                                <div className="space-y-5 animate-in fade-in duration-300">
+                                    <h4 className="text-base font-bold text-white">Langkah Akhir: Salin & Simpan Kunci Anda</h4>
+                                    <p className="text-sm text-slate-300 leading-relaxed">
+                                        Salin kode API Key yang muncul (biasanya diawali huruf <code className="text-cyan-400 font-mono">AIzaSy...</code>) dari tab Google AI Studio, lalu tempelkan langsung pada kolom di bawah ini:
+                                    </p>
+                                    <div className="space-y-3">
+                                        <label className="text-xs font-bold text-cyan-400 uppercase tracking-wider block">Tempel API Key Baru di Sini:</label>
+                                        <div className="flex gap-2">
+                                            <input 
+                                                type="text" 
+                                                value={tempKey}
+                                                onChange={(e) => setTempKey(e.target.value.trim())}
+                                                placeholder="AIzaSy..."
+                                                className="flex-1 bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white font-mono focus:border-cyan-500 outline-none transition"
+                                            />
+                                        </div>
+                                    </div>
+                                    {tempKey && tempKey.startsWith("AIzaSy") ? (
+                                        <div className="bg-green-500/10 border border-green-500/20 text-green-300 text-xs p-3 rounded-lg flex items-center gap-2">
+                                            <span>✓</span> Kunci berformat valid. Klik tombol simpan di bawah untuk mengaktifkan!
+                                        </div>
+                                    ) : tempKey ? (
+                                        <div className="bg-yellow-500/10 border border-yellow-500/20 text-yellow-300 text-xs p-3 rounded-lg flex items-center gap-2">
+                                            <span>⚠️</span> Format kunci biasanya dimulai dengan "AIzaSy". Pastikan Anda telah menyalinnya dengan benar.
+                                        </div>
+                                    ) : null}
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Footer Modal */}
+                        <div className="p-4 border-t border-white/10 bg-slate-900/80 flex justify-between items-center gap-2">
+                            <button 
+                                disabled={guideStep === 1}
+                                onClick={() => setGuideStep(prev => prev - 1)}
+                                className="px-4 py-2 text-xs font-bold text-slate-300 hover:text-white bg-slate-800 hover:bg-slate-700 rounded-lg transition disabled:opacity-30 disabled:cursor-not-allowed"
+                            >
+                                Sebelumnya
+                            </button>
+
+                            {guideStep < 4 ? (
+                                <button 
+                                    onClick={() => setGuideStep(prev => prev + 1)}
+                                    className="px-5 py-2.5 text-xs font-bold bg-cyan-500 hover:bg-cyan-400 text-slate-950 rounded-lg transition"
+                                >
+                                    Selanjutnya
+                                </button>
+                            ) : (
+                                <button 
+                                    disabled={!tempKey}
+                                    onClick={() => {
+                                        setApiKey(tempKey);
+                                        localStorage.setItem("cinefact_api_key", tempKey);
+                                        setIsGuideOpen(false);
+                                        setCopySuccess("API Key berhasil diaktifkan!");
+                                        setTimeout(() => setCopySuccess(""), 3000);
+                                    }}
+                                    className="px-5 py-2.5 text-xs font-bold bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-400 hover:to-green-500 text-white rounded-lg transition shadow-lg shadow-emerald-500/10 disabled:opacity-50 disabled:cursor-not-allowed"
+                                >
+                                    Simpan & Aktifkan Kunci 🚀
+                                </button>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            )}
+        </div>
+    );
+};
+
+export default App;
