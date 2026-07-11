@@ -1,0 +1,1 @@
+Versi USER API KEY. Pengguna memakai API key Gemini milik sendiri. Tidak perlu Environment Variable Vercel.
